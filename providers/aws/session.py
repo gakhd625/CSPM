@@ -37,7 +37,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, ClassVar, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -56,13 +56,14 @@ class CachedCredentials:
     running checkers never hit an expiry mid-scan.
     """
 
-    # How many seconds before expiry to proactively refresh
-    REFRESH_BUFFER_SECONDS: int = 300  # 5 minutes
-
+    # Non-default fields must come first in a dataclass
     access_key:    str
     secret_key:    str
     session_token: str
     expiry:        datetime   # UTC
+
+    # Class-level constant (not a field — use ClassVar to prevent dataclass treating it as a field)
+    REFRESH_BUFFER_SECONDS: ClassVar[int] = 300  # 5 minutes
 
     @property
     def is_expired(self) -> bool:
